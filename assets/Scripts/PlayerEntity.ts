@@ -20,5 +20,11 @@ export class PlayerEntity {
 
         this.playerIndex = 1;
     }
+
+    lvlUp()
+    {
+        this.lvl++;
+        this.remainPoint += 5;
+    }
 }
 

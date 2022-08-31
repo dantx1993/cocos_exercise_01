@@ -11,10 +11,14 @@ export class StatUI extends Component {
     public onAddStat: Function;
 
     onEnable() {
-        this.btnAdd.node.on('click', this.onAddStat, this);
+        this.btnAdd.node.on('click', this.onAddStartFunc, this);
     }
     onDisable() {
-        this.btnAdd.node.off('click', this.onAddStat, this);
+        this.btnAdd.node.off('click', this.onAddStartFunc, this);
+    }
+
+    onAddStartFunc() {
+        this.onAddStat?.();
     }
 
     updateUI(value: number, remainPoint: number) {
