@@ -1,5 +1,6 @@
-import { _decorator, Component, Node, sys } from 'cc';
+import { _decorator, Component, Node, sys, instantiate, Vec3, Prefab, debug } from 'cc';
 import { MainLayout } from './MainLayout';
+import { MessagePopup } from './MessagePopup';
 import { PlayerEntity } from './PlayerEntity';
 import { StartLayout } from './StartLayout';
 const { ccclass, property } = _decorator;
@@ -20,6 +21,10 @@ export class Controller extends Component {
     startLayout: StartLayout = null!;
     @property({ type: MainLayout })
     mainLayout: MainLayout = null!;
+    @property({ type: Prefab })
+    msgPopupPrefab: Prefab;
+    @property({ type: Node })
+    popupParent: Node = null!;
 
     private _dataKey: string = 'playerData';
     private _playerData: PlayerEntity;
@@ -78,12 +83,33 @@ export class Controller extends Component {
             }
         }
         this.mainLayout.onLoadData = () => {
-            this.loadData();
-            this.mainLayout.onUpdateUI(this._playerData);
+            this.spawnPopup("Do you want to load data?", () => {
+                this.loadData();
+                this.mainLayout.onUpdateUI(this._playerData);
+            });
         }
         this.mainLayout.onSaveData = () => {
-            this.saveData();
+            this.spawnPopup("Do you want to save data?", () => {
+                this.saveData()
+            });
         }
+        this.mainLayout.onBtnCloseClicked = () => {
+            this.spawnPopup("Do you want to quit app?", () => {
+                this.startLayout.node.active = true;
+                this.mainLayout.node.active = false;
+                this._playerData = new PlayerEntity();
+                this.mainLayout.onUpdateUI(this._playerData);
+            });
+        }
+    }
+
+    spawnPopup(msg: string, onConfirm: Function) {
+        console.log(this.msgPopupPrefab == null);
+        let msgPopup = instantiate(this.msgPopupPrefab);
+        msgPopup.parent = this.popupParent;
+        // msgPopup.setPosition(Vec3.ZERO);
+
+        msgPopup.getComponent(MessagePopup).show(msg).setOnHide(onConfirm);
     }
 
     saveData() {
@@ -91,6 +117,9 @@ export class Controller extends Component {
     }
     loadData() {
         this._playerData = JSON.parse(sys.localStorage.getItem(this._dataKey));
+        if (this._playerData == null) {
+            this._playerData = new PlayerEntity();
+        }
     }
 
     // update(deltaTime: number) {

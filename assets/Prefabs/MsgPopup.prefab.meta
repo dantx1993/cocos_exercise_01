@@ -1,0 +1,14 @@
+{
+  "ver": "1.1.38",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "10d6b16d-fb60-4b81-a46a-6d711dd8b9b5",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "MsgPopup",
+    "persistent": true
+  }
+}
